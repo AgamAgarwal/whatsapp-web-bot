@@ -1,4 +1,4 @@
-const { Client, MessageMedia, LocalAuth, Contact } = require("whatsapp-web.js");
+import { Client, MessageMedia, LocalAuth, Contact } from "whatsapp-web.js";
 
 const client = new Client({
   puppeteer: {
@@ -16,31 +16,49 @@ const MESSAGE =
 const CONTACTS = ["Bhai"];
 
 class Bot {
-  contacts = [];
+  private contacts: Contact[] = [];
 
-  constructor(client) {
-    this.client = client;
-  }
+  constructor(private readonly client: Client) {}
 
   async init() {
     this.contacts = await this.client.getContacts();
     console.log("Contacts initialized");
   }
 
-  findContact(name) {
+  findContact(name: string) {
     return this.contacts.find((c) => c.name === name);
   }
 
-  async sendTextMessage(name, message) {
+  async sendTextMessage(name: string, message: string) {
     const contact = this.findContact(name);
+
+    if (!contact) {
+      console.error(`Contact ${name} not found`);
+      return;
+    }
+
     const chat = await contact.getChat();
-    await chat.sendMessage(message);
+    await chat.sendMessage(message, { waitUntilMsgSent: true });
+
+    console.log(`Message sent to ${name} successfully`);
   }
 
-  async sendMediaMessage(name, media, caption) {
+  async sendMediaMessage(name: string, media: MessageMedia, caption?: string) {
     const contact = this.findContact(name);
+
+    if (!contact) {
+      console.error(`Contact ${name} not found`);
+      return;
+    }
+
     const chat = await contact.getChat();
-    await chat.sendMessage(media, { caption: caption, sendMediaAsHd: true });
+    await chat.sendMessage(media, {
+      caption: caption,
+      sendMediaAsHd: true,
+      waitUntilMsgSent: true,
+    });
+
+    console.log(`Message sent to ${name} successfully`);
   }
 }
 
@@ -50,9 +68,9 @@ async function runBot() {
 
   const attachment = MessageMedia.fromFilePath("data/attachment.mp4");
 
-  await bot.sendMediaMessage("Bhaia", attachment, MESSAGE);
+  await bot.sendMediaMessage("Bhai", attachment, MESSAGE);
 
-  console.log("message sent");
+  process.exit(0);
 }
 
 client.on("ready", async () => {
