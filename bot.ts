@@ -36,6 +36,10 @@ const client = new Client({
   authStrategy: new LocalAuth({ clientId: "LOCAL_CLIENT_ID" }),
 });
 
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 class Bot {
   private contacts: Contact[] = [];
 
@@ -73,7 +77,10 @@ async function runBot() {
   const bot = new Bot(client);
   await bot.init();
 
-  await bot.sendMessage("Bhai", MESSAGE, attachment);
+  for (const name of CONTACTS) {
+    await sleep(2000);
+    await bot.sendMessage(name, MESSAGE, attachment);
+  }
 
   process.exit(0);
 }
