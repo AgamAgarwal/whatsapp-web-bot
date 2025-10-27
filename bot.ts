@@ -1,4 +1,30 @@
 import { Client, MessageMedia, LocalAuth, Contact } from "whatsapp-web.js";
+import parseArgs from "minimist";
+import fs from "node:fs";
+
+const args = parseArgs(process.argv.slice(2));
+
+if (!("message_file" in args)) {
+  console.error("Missing required argument: message_file");
+  process.exit(1);
+}
+
+if (!("contacts_file" in args)) {
+  console.error("Missing required argument: contacts_file");
+  process.exit(1);
+}
+
+const MESSAGE_FILE = args["message_file"];
+const MESSAGE = fs.readFileSync(MESSAGE_FILE, "utf8").trimEnd();
+
+const CONTACTS_FILE = args["contacts_file"];
+const CONTACTS = fs.readFileSync(CONTACTS_FILE, "utf8").trimEnd().split("\n");
+
+let attachment: MessageMedia | undefined;
+if ("attachment_file" in args) {
+  const ATTACHMENT_FILE = args["attachment_file"];
+  attachment = MessageMedia.fromFilePath(ATTACHMENT_FILE);
+}
 
 const client = new Client({
   puppeteer: {
@@ -9,11 +35,6 @@ const client = new Client({
   },
   authStrategy: new LocalAuth({ clientId: "LOCAL_CLIENT_ID" }),
 });
-
-const MESSAGE =
-  "💍 With immense joy, we invite you to the wedding celebrations of Harshit ❤️ Riya, to be held from 23rd to 25th November 2025 at Anandi Magic World, Lucknow.\n\nPlease find complete celebration details in the invitation video below. ✨ Your gracious presence and blessings will mean the world to us. ✨\n\n#DilHaRiya";
-
-const CONTACTS = ["Bhai"];
 
 class Bot {
   private contacts: Contact[] = [];
@@ -29,7 +50,7 @@ class Bot {
     return this.contacts.find((c) => c.name === name);
   }
 
-  async sendTextMessage(name: string, message: string) {
+  async sendMessage(name: string, message: string, attachment?: MessageMedia) {
     const contact = this.findContact(name);
 
     if (!contact) {
@@ -38,22 +59,8 @@ class Bot {
     }
 
     const chat = await contact.getChat();
-    await chat.sendMessage(message, { waitUntilMsgSent: true });
-
-    console.log(`Message sent to ${name} successfully`);
-  }
-
-  async sendMediaMessage(name: string, media: MessageMedia, caption?: string) {
-    const contact = this.findContact(name);
-
-    if (!contact) {
-      console.error(`Contact ${name} not found`);
-      return;
-    }
-
-    const chat = await contact.getChat();
-    await chat.sendMessage(media, {
-      caption: caption,
+    await chat.sendMessage(message, {
+      media: attachment,
       sendMediaAsHd: true,
       waitUntilMsgSent: true,
     });
@@ -66,9 +73,7 @@ async function runBot() {
   const bot = new Bot(client);
   await bot.init();
 
-  const attachment = MessageMedia.fromFilePath("data/attachment.mp4");
-
-  await bot.sendMediaMessage("Bhai", attachment, MESSAGE);
+  await bot.sendMessage("Bhai", MESSAGE, attachment);
 
   process.exit(0);
 }
