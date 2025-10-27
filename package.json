@@ -16,6 +16,7 @@
   },
   "scripts": {
     "bot": "npx tsc && node out/bot.js",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "login": "npx tsc && node out/login.js"
   }
 }

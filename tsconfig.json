@@ -4,6 +4,6 @@
     "allowJs": true,
     "outDir": "out"
   },
-  "include": ["bot.ts", "eslint.config.mjs"],
+  "include": ["bot.ts", "login.ts", "eslint.config.mjs"],
   "exclude": ["node_modules"]
 }

@@ -4,6 +4,11 @@ import fs from "node:fs";
 
 const args = parseArgs(process.argv.slice(2));
 
+if (!("client_id" in args)) {
+  console.error("Missing required argument: client_id");
+  process.exit(1);
+}
+
 if (!("message_file" in args)) {
   console.error("Missing required argument: message_file");
   process.exit(1);
@@ -33,7 +38,7 @@ const client = new Client({
     executablePath:
       "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   },
-  authStrategy: new LocalAuth({ clientId: "LOCAL_CLIENT_ID" }),
+  authStrategy: new LocalAuth({ clientId: args["client_id"] }),
 });
 
 async function sleep(ms: number) {
@@ -84,6 +89,12 @@ async function runBot() {
 
   process.exit(0);
 }
+
+client.on("qr", () => {
+  console.log("QR Code received. Please login first!");
+
+  process.exit(1);
+});
 
 client.on("ready", async () => {
   console.log("Client is ready!");
