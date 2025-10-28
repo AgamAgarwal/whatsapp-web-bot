@@ -83,7 +83,7 @@ async function runBot() {
   await bot.init();
 
   for (const name of CONTACTS) {
-    await sleep(2000);
+    await sleep(20000);
     await bot.sendMessage(name, MESSAGE, attachment);
   }
 
