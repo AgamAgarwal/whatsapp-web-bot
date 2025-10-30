@@ -9,27 +9,33 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default defineConfig([globalIgnores(["**/out"]), {
-    extends: compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
+export default defineConfig([
+  globalIgnores(["**/out", ".wwebjs_auth/"]),
+  {
+    extends: compat.extends(
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+    ),
 
     languageOptions: {
-        globals: {
-            ...globals.node,
-        },
+      globals: {
+        ...globals.node,
+      },
 
-        parser: tsParser,
-        ecmaVersion: 2024,
-        sourceType: "module",
+      parser: tsParser,
+      ecmaVersion: 2024,
+      sourceType: "module",
 
-        parserOptions: {
-            project: "tsconfig.json",
-        },
+      parserOptions: {
+        project: "tsconfig.json",
+      },
     },
 
     rules: {},
-}]);
+  },
+]);
