@@ -19,6 +19,11 @@ if (!("contacts_file" in args)) {
   process.exit(1);
 }
 
+let delay_ms = 30000;
+if ("delay_ms" in args) {
+  delay_ms = parseInt(args["delay_ms"]);
+}
+
 const MESSAGE_FILE = args["message_file"];
 const MESSAGE = fs.readFileSync(MESSAGE_FILE, "utf8").trimEnd();
 
@@ -83,7 +88,7 @@ async function runBot() {
   await bot.init();
 
   for (const name of CONTACTS) {
-    await sleep(20000);
+    await sleep(delay_ms);
     await bot.sendMessage(name, MESSAGE, attachment);
   }
 

@@ -46,7 +46,7 @@ Create the following files (you can create them anywhere your system):
 Now, run the following command:
 
 ```bash
-$ npm run bot -- --client_id <CLIENT_ID> --message_file <MESSAGE_FILE> --contacts_file <CONTACTS_FILE> [--attachment_file <ATTACHMENT_FILE>]
+$ npm run bot -- --client_id <CLIENT_ID> --message_file <MESSAGE_FILE> --contacts_file <CONTACTS_FILE> [--attachment_file <ATTACHMENT_FILE>] [--delay_ms <DELAY_MS>]
 ```
 
 This will now send the message to each specified user, sequentially, spaced 20 seconds.
@@ -72,4 +72,3 @@ If you need a different logic, feel free to simply edit `bot.ts` to add your log
 Feel free to contribute to the project by sending a pull request.
 
 Visit [WWeb.js's documentation](https://docs.wwebjs.dev/) to look at more capabilities of [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js).
-
